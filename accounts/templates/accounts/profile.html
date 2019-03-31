@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Profile | {{ user }} {{ super }}{% endblock %}
+
+{% block body %}
+    <h1>Profile</h1>
+    <div class="grid-80">
+        {% if not profile.first_name %}
+            <p>You have an empty profile.</p>
+            <a href="">Add some info</a>
+        {% else %}
+            <div class="grid-50">
+                <p><span class="underline">First Name</span>: {{ profile.first_name }}</p>
+                <p><span class="underline">Last Name</span>: {{ profile.last_name }}</p>
+                <p><span class="underline">Email</span>: {{ profile.email }}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
