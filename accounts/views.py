@@ -14,6 +14,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 
+from django.views.generic.edit import UpdateView
 
 from . import models
 from . import forms
@@ -111,4 +112,28 @@ def profile(request):
     return render(request, 'accounts/profile.html', {
         'profile': profile
     })
+
+@login_required
+def create_post(request):
+    """ Create a new administrative post """
+    user = request.user
+    if user.username in ["president", "admin"]:
+        if request.method == "POST":
+            form = forms.PostCreateForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['post']
+                password = form.cleaned_data['password']
+                post_name = form.cleaned_data['post_name']
+
+                if User.objects.filter(username=username).exists():
+                    return render(request, 'message.html', { 'message' : 'Provided Username exists' , 'code' : '201' })
+                else:
+                    user = User.objects.create_user(username = username, password= password)
+                    models.Post.objects.create(user = user, post_name = post_name)
+                    return render(request, 'message.html', { 'message' : 'New Post Created' , 'code' : '200' })
+        else:
+            form = forms.PostCreateForm()
+        return render(request, 'accounts/new_post.html', {'form': form})
+    else:
+        return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
 

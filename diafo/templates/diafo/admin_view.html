@@ -1,0 +1,119 @@
+{% extends "diafo/base.html" %}
+
+{% block title %}
+Admin view
+{% endblock %}
+
+{% load bootstrap4 %}
+{% load staticfiles %}
+
+
+{% block content %}
+    <div class="profile-content">
+        <div class="well well-sm" style="padding-bottom: 20px;background: rgb(143, 186, 156);">
+            <h2 class="text-center" style="color: #343e2e;">{{title}} </h2>
+        </div>
+
+        <hr>
+        <br>
+
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#edit-questions" data-toggle="tab">Edit Form Questions</a></li>
+                    <li><a href="#preview" data-toggle="tab">Preview Form</a></li>
+                    <li><a href="#detail" data-toggle="tab">Edit Details</a></li>
+                    <li><a href="#responses" data-toggle="tab">Responses({{ count}})</a></li>
+                    <li><a class="=btn btn-success" href = "{% url 'diafo:user_view' view_id %}" target="_blank">Form Link</a> </li>
+
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade active in" id="edit-questions">
+                        <br>
+
+                        <div class="col-lg-6">
+                            <div>
+                                <h4 style="color: #1b3013;"> Click on a Question to Edit</h4>
+                            </div>
+                        </div>
+
+                         <div class="col-lg-6 text-right">
+                            <a href="{% url 'diafo:add_question' pk %}">
+                                <div class="col-lg-6 btn btn-danger">Add New Question</div>
+                            </a>
+                         </div>
+
+                        <hr>
+                    <br>
+                        {% for question in questions %}
+                        <a href="{% url 'diafo:edit_question' pk=pk ques_id=question.pk %}">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div>
+                                        <p style="font-size: large">{{question.question}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    <div class="tab-pane fade" id="preview">
+
+                        <div class="form-group">
+                            <div class="col-lg-10 box" style="margin:25px">
+                                <form>
+                                    {% csrf_token %}
+                                    <p> {% bootstrap_form form %} </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="detail">
+
+                        <div class="form-group">
+                            <div class="col-lg-10 box" style="margin:25px">
+                                <form action="" method="post">
+                                    {% csrf_token %}
+
+                                    <p> {% bootstrap_form detail_form %} </p>
+
+                                    <div class="text-center">
+                                        <input type="submit" class="btn btn-success" value="submit">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="responses">
+
+
+                        <table class="table table-striped table-hover table-bordered">
+                            <br>
+                            {% for response in responses  %}
+                            <tbody>
+                                <tr>
+                                      <td>
+                                          <a href="{% url 'diafo:view_filled_form' response.pk %}" target="_blank">
+                                              Response - {{response.pk}}
+                                              {% if response.applicant %}
+                                               ({{response.applicant}})
+                                              {% else %}
+                                               (none)
+                                              {% endif %}
+                                          </a>
+
+                                      </td>
+                                      <td>{{response.timestamp}}</td>
+
+                                </tr>
+
+                            </tbody>
+                            {% endfor %}
+
+                        </table>
+
+                    </div>
+            </div>
+{% endblock %}
