@@ -11,4 +11,5 @@ urlpatterns = [
         views.activate, name='activate'),
     path('sign_out/', views.sign_out, name='sign_out'),
     path('profile/', views.profile, name='profile'),
+    path('create_post/', views.create_post, name='create_post'),
 ]

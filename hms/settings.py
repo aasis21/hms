@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
+    'election',
+    'diafo',
     'bill.apps.BillConfig',
     'bootstrap4',
     'django.contrib.admin',

@@ -1,0 +1,33 @@
+{% extends "diafo/base.html" %}
+{% block title %}
+Response
+{% endblock %}
+
+{% load bootstrap4 %}
+{% load staticfiles %}
+
+
+{% block content %}
+
+<div class="profile-content ">
+
+            <h2 class="intro-text text-center">
+                <strong>{{ title }}</strong>
+            </h2>
+            <h5 class="text-center" style="color:black">
+                Response - ({{applicant}})
+            </h5>
+                <hr>
+            <div style="margin:25px">
+                    <form>
+                            {% csrf_token %}
+                        <p>
+                            {% bootstrap_form form %}
+
+                        </p>
+
+                    </form>
+            </div>
+</div>
+
+{% endblock  %}

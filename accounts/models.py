@@ -16,6 +16,11 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+class Post(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    post_name = models.CharField(max_length=255, default='')
+    post_holders = models.ManyToManyField(User, related_name='posts')
+
 def create_profile(sender, **kwargs):
     if kwargs['created']:
         profile = Profile.objects.create(user=kwargs['instance'])
