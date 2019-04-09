@@ -14,7 +14,7 @@ def user_view(request,view_id):
     questionnaire = Questionnaire.objects.get(view_id = view_id)
     form = questionnaire.get_form(request.POST or None)
     if form.is_valid():
-        if questionnaire.collect_identity:
+        if questionnaire.requires_sign_in and questionnaire.collect_identity:
             if request.user:
                  filled_form = questionnaire.add_answer(request.user, form.cleaned_data)
             else:

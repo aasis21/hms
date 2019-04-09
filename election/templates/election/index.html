@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block title %} Election {% endblock %}
+
+{% block body %}
+    {% if result.exists %}
+    RESULT
+    {% for entity in result %}
+        {{ entity.title }}
+    {% endfor %}
+    {% endif %}
+
+    {% if poll.exists %}
+    POLL
+    {% for entity in poll %}
+        {{ entity.title }}
+    {% endfor %}
+    {% endif %}
+
+    {% if nomination.exists %}
+    NOMINATION
+    {% for entity in nomination %}
+        {{ entity.title }}
+    {% endfor %}
+    {% endif %}
+
+    {% if campaign.exists %}
+    CAMPAIGN
+    {% for entity in campaign %}
+        {{ entity.title }}
+    {% endfor %}
+    {% endif %}
+
+    {% if ec %}
+    {% if blank.exists %}
+    BLANK
+    {% for entity in blank %}
+        {{ entity.title }}
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+
+{% endblock %}
+
