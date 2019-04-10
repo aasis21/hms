@@ -7,8 +7,14 @@
 {% block body %}
 {% if ec %}
 <a href="{% url 'election:create_entity' %}" class = "btn btn-primary">  Create New Election Entity </a>
+
+{% endif %}
+
+{% if ec and offline.exists %}
+<a href="{% url 'election:offline_polling' %}" class = "btn btn-primary">  Offline Polling Modules </a>
 <br>
 {% endif %}
+<br>
 
 {% if ec and offline.exists %}
 <h3>Offline Poll Phase</h3> 
@@ -19,7 +25,7 @@
     {{ entity.title }}  | <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a>
     </div>
     <div class="card-body">
-        {{entity.description}}
+         <pre>{{entity.description | urlize }}</pre>
     </div>
 </div>
 {% endfor %}

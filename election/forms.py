@@ -9,7 +9,7 @@ class EntityCreateForm(forms.Form):
     form_title = forms.CharField(label = 'Nomination Form Title', max_length= 200)
 
 class NomiManifestoForm(forms.Form):
-    manifesto = forms.CharField(label = "Description", widget = forms.Textarea, max_length= 5000)
+    manifesto = forms.CharField(label = "Manifesto", widget = forms.Textarea, max_length= 5000)
 
 class PollForm(forms.Form):
     candidates = forms.ModelChoiceField(queryset=models.EntityCandidate.objects.all(), widget= RadioSelectButtonGroup, empty_label=None , label="" )

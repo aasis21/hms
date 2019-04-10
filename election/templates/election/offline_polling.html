@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block title %} Election {% endblock %}
+
+{% block body %}
+
+{% if offline.exists %}
+<h1> Offline Polling </h1>
+{% for entity in offline %}
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | <a href="{% url 'election:entity_offline_poll' entity.pk %}">  detail </a>
+    </div>
+    <div class="card-body">
+         <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+
+<h3>  No Election Entity in Offline Poll Mode </h3>
+
+{% endif %}
+{% endblock %}
+

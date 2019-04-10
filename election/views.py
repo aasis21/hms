@@ -22,6 +22,15 @@ def create_form(request):
     survey = models.Survey.objects.create(title="djhfkjhdj", questionnaire = questionnaire)
     return HttpResponseRedirect(reverse('diafo:admin_view', kwargs={'pk': survey.questionnaire.pk}))
 
+@login_required 
+def offline_polling(request):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+    offline_phase = models.Entity.objects.filter(phase="OPP")
+    return render(request, 'election/offline_polling.html', {'offline': offline_phase})
+
+    
+@login_required
 def create_entity(request):
     if request.user.username == "ec":
         form = forms.EntityCreateForm()
@@ -60,12 +69,32 @@ def entity_detail_user(request, pk):
     
     manifesto_form = forms.NomiManifestoForm()
     
-    cast_form = forms.PollForm(initial={ 'candidates' : models.EntityCandidate.objects.filter(entity = entity, user=request.user).first() })
-    cast_form.fields['candidates'].queryset = models.EntityCandidate.objects.filter(entity = entity)
+    nota = User.objects.get(username = "nota")
+    cast_form = forms.PollForm(initial={ 'candidates' : models.EntityCandidate.objects.filter(entity = entity, user=nota).first() })
+    cast_form.fields['candidates'].queryset = models.EntityCandidate.objects.filter(entity = entity, approval = True)
 
     return render(request, 'election/entity_detail_user.html',{'entity': entity, 'candidates': candidates, 'phase' : phase_dict[phase], \
             'manifesto_form' : manifesto_form, 'result' : candidates.order_by('-votes'), 'cast_form' : cast_form })
 
+def entity_offline_poll(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+    try:
+        entity = models.Entity.objects.get(pk=pk)
+    except:
+        return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+    
+    phase = entity.phase
+    if phase != "OPP":
+        return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+
+    candidates = entity.candidates.filter(approval=True)
+    nota = User.objects.get(username = "nota")
+    cast_form = forms.PollForm(initial={ 'candidates' : candidates.filter(user=nota).first() })
+    cast_form.fields['candidates'].queryset = candidates
+
+
+    return render(request, 'election/entity_offline_poll.html',{'entity': entity, 'candidates': candidates, 'cast_form': cast_form})
 
 
 @login_required
@@ -151,10 +180,34 @@ def cast_vote(request, pk):
     cast_form = forms.PollForm(request.POST)
     if cast_form.is_valid():
         vote_candidate =  cast_form.cleaned_data['candidates']
+        vote_candidate = User.objects.get(username = vote_candidate)
+
         check_for_vote = entity.votes.filter(user = request.user)
         if check_for_vote.exists():
             return render(request, 'message.html', { 'message' : 'Can not vote Twice' , 'code' : '404' })
+        entity_candidate = entity.candidates.filter(user = vote_candidate).first()
+        entity_candidate.votes = entity_candidate.votes  + 1
+        entity_candidate.save()
         models.EntityVotecast.objects.create(entity = entity, user = request.user)
+        return render(request, 'message.html', { 'message' : 'Vote Casted Successfully' , 'code' : '200' })
+
+    else:
+        return render(request, 'message.html', { 'message' : 'Form input Not valid' , 'code' : '404' })
+
+@login_required
+@require_http_methods(["POST"])
+def cast_vote_offline(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+
+    entity = models.Entity.objects.get(pk=pk)
+    phase = entity.phase
+    if phase != "OPP":
+        return render(request, 'message.html', { 'message' : 'Not in Polling phase' , 'code' : '404' })
+    cast_form = forms.PollForm(request.POST)
+    if cast_form.is_valid():
+        vote_candidate =  cast_form.cleaned_data['candidates']
+        vote_candidate = User.objects.get(username = vote_candidate)
         entity_candidate = entity.candidates.filter(user = vote_candidate).first()
         entity_candidate.votes = entity_candidate.votes  + 1
         entity_candidate.save()
