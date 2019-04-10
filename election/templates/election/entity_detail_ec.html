@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block title %} Entity Detail {% endblock %}
+
+{% block body %}
+    <h1>{{ entity.title }} | {{phase}}  |  <a href="{% url 'diafo:admin_view' entity.nomination.pk %}" target="_blank">manage nomination form </a> </h1>
+
+    <div class="card ">
+        <div class="card-header">
+            Description
+        </div>
+        <div class="card-body">
+            <p class="card-text text-left" id="mdrender"><pre>{{  entity.description }}</pre></p>
+            
+        </div>
+    </div>
+
+    {% if entity.phase == "MP" or entity.phase == "RP" or entity.phase == "EP"%}
+        <br>
+        <h3>Result</h3>
+        {% for candidate in result %}
+        <br>
+        <div class="card ">
+            <div class="card-header">
+            {{ candidate.user.username }}  
+            </div>
+            <div class="card-body">
+                Votes : {{candidate.votes}}
+            </div>
+        </div>
+        {% endfor %}  
+    {% endif %} 
+    
+    <br>
+    <h3>Change Phase</h3>
+    <br>
+    <div class="card ">
+        <div class="card-body">
+            <br>
+                <form class="user" method="post" action="{% url  'election:phase_edit' entity.pk%}">
+                {% csrf_token  %}
+                {% bootstrap_form phase_change_form %}
+                <input class="btn btn-primary btn-user btn-block"type="submit" value="Change" />
+                <hr>
+            </form>
+
+            
+        </div>
+    </div>
+
+    {% if candidates.exists%}
+
+    <br>
+    <h3>Candidates</h3>
+        
+    {% for candidate in candidates %}
+    <br>
+    <div class="card ">
+        <div class="card-header">
+        {{ candidate.user.username }} |  <a href="{% url 'diafo:view_filled_form' candidate.response.pk %}">  See Nomination response </a> | {% if candidate.approval == True %}   <a href="{% url 'election:approval_reject' candidate.pk %}"> reject </a> {% else %}   <a href="{% url 'election:approval_accept' candidate.pk %}"> accept </a> {% endif %} 
+        </div>
+        <div class="card-body">
+            {{candidate.readme}}    
+        </div>
+
+    </div>
+    {% endfor %}
+
+    {% endif %}
+
+
+    <br>
+    <h3>Edit Description</h3>
+    <br>
+    <div class="card ">
+        <div class="card-body">
+            <br>
+                <form class="user" method="post" action="{% url  'election:description_edit' entity.pk%}">
+                {% csrf_token  %}
+                {% bootstrap_form edit_description_form %}
+                <input class="btn btn-primary btn-user btn-block"type="submit" value="Change" />
+                <hr>
+            </form>
+
+            
+        </div>
+    </div>
+
+    
+{% endblock %}

@@ -13,8 +13,8 @@ class Questionnaire(models.Model):
     view_id = models.CharField(max_length=50,unique=True, default=uuid.uuid4)
 
     name = models.CharField(max_length=200, null=True)
-    requires_sign_in = models.BooleanField(default = False, blank = True)
-    collect_identity = models.BooleanField(default = False, blank = True)
+    requires_sign_in = models.BooleanField(default = True, blank = True)
+    collect_identity = models.BooleanField(default = True, blank = True)
 
     def __unicode__(self):
         return self.name

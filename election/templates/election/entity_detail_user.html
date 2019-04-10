@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block title %} Entity Detail {% endblock %}
+
+{% block body %}
+    <h1>{{ entity.title }} | {{phase}} </h1>
+
+    <div class="card ">
+    <div class="card-header">
+        Description
+    </div>
+    <div class="card-body">
+        <p class="card-text text-left" id="mdrender"><pre>{{  entity.description }}</pre></p>
+        
+    </div>
+    </div>
+
+    {% if entity.phase == "NP"%}
+        <br>
+        <div class="card ">
+        <div class="card-header">
+            File Nomination
+        </div>
+        <div class="card-body">
+            {% comment %} <h5 class="card-title">Special title treatment</h5> {% endcomment %}
+            <p class="card-text text-left" id="mdrender">
+            File for Nomination if you are eligible otherwise nomination would be cancelled. 
+            This is a two step process. First fill the Nomination form and then fill the manifesto form.            
+            </p>
+
+            click <a href={%url 'diafo:user_view' entity.nomination.view_id %} > here </a> to fill nomination form.
+
+            <br>
+            <br>
+            <br>
+             <form class="user" method="post" action="{% url  'election:file_nomination' entity.pk%}">
+                {% csrf_token  %}
+                {% bootstrap_form manifesto_form %}
+                <input class="btn btn-primary btn-user btn-block"type="submit" value="File Nomination" />
+                <hr>
+            </form>
+   
+        </div>
+        </div>
+
+        
+    {% endif %}
+
+    {% if entity.phase == "RP"%}
+        <br>
+  
+        <h3>Result</h3>
+           
+        {% for candidate in result %}
+        <br>
+        <div class="card ">
+            <div class="card-header">
+            {{ candidate.user.username }}  
+            </div>
+            <div class="card-body">
+                Votes : {{candidate.votes}}
+            </div>
+        </div>
+        {% endfor %}
+        
+    {% endif %}
+
+    {% if entity.phase == "PP"%}
+    <br>
+
+    <h3>Cast Your Vote</h3>
+        
+    <br>
+    <form class="user" method="post" action="{% url  'election:cast_vote' entity.pk%}">
+        {% csrf_token  %}
+        {% bootstrap_form cast_form %}
+        <input class="btn btn-primary btn-user btn-block"type="submit" value="Cast Vote" />
+        <hr>
+    </form>
+
+        
+    {% endif %}
+
+    {% if entity.phase == "CP" or entity.phase == "PP"  or entity.phase == "RP" or entity.phase == "OPP" or entity.phase == "MP"   %}
+        <br>
+  
+        <h3>Candidates</h3>
+           
+        {% for candidate in candidates %}
+        <br>
+        <div class="card ">
+            <div class="card-header">
+            {{ candidate.user.username }}
+            </div>
+            <div class="card-body">
+                {{candidate.readme}}    
+            </div>
+        </div>
+        {% endfor %}
+        
+    {% endif %}
+    
+{% endblock %}
