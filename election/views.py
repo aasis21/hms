@@ -198,11 +198,11 @@ def file_nomination(request, pk):
 
 @login_required
 def index(request):
-    result_phase = models.Entity.objects.filter(phase = "RP")
-    poll_phase = models.Entity.objects.filter(phase = "PP")
     nomination_phase = models.Entity.objects.filter(phase = "NP")
     campaign_phase = models.Entity.objects.filter(phase = "CP")
-
+    poll_phase = models.Entity.objects.filter(phase = "PP")
+    result_phase = models.Entity.objects.filter(phase = "RP")
+    
     t_data= {'result' : result_phase, 
             'poll': poll_phase, 
             'nomination' : nomination_phase,
@@ -210,7 +210,15 @@ def index(request):
     }
 
     if request.user.username == "ec":
-        blank_phase = models.Entity.objects.filter(phase="BP")
-        return render(request, 'election/index.html', {**t_data, 'blank' :  blank_phase, 'ec': True})
+        initial_phase = models.Entity.objects.filter(phase="IP")
+        mid_phase = models.Entity.objects.filter(phase="MP")
+        offline_phase = models.Entity.objects.filter(phase="OPP")
+        end_phase = models.Entity.objects.filter(phase="EP")
+        ec_data= {'initial' : initial_phase, 
+                'mid': mid_phase, 
+                'offline' : offline_phase,
+                'end': end_phase,
+        }
+        return render(request, 'election/index.html', {**t_data, **ec_data , 'ec': True})
     else:
         return render(request, 'election/index.html', { **t_data, 'ec' : False})

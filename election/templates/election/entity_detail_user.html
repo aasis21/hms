@@ -13,7 +13,7 @@
         Description
     </div>
     <div class="card-body">
-        <p class="card-text text-left" id="mdrender"><pre>{{  entity.description }}</pre></p>
+        <p class="card-text text-left" id="mdrender"><pre>{{  entity.description | urlize }}</pre></p>
         
     </div>
     </div>
@@ -96,7 +96,7 @@
             {{ candidate.user.username }}
             </div>
             <div class="card-body">
-                {{candidate.readme}}    
+               <pre> {{candidate.readme |  urlize }}   </pre>
             </div>
         </div>
         {% endfor %}

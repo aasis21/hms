@@ -5,42 +5,146 @@
 {% block title %} Election {% endblock %}
 
 {% block body %}
-    {% if result.exists %}
-    RESULT
-    {% for entity in result %}
-        {{ entity.title }}
-    {% endfor %}
-    {% endif %}
+{% if ec %}
+<a href="{% url 'election:create_entity' %}" class = "btn btn-primary">  Create New Election Entity </a>
+<br>
+{% endif %}
 
-    {% if poll.exists %}
-    POLL
-    {% for entity in poll %}
-        {{ entity.title }}
-    {% endfor %}
-    {% endif %}
+{% if ec and offline.exists %}
+<h3>Offline Poll Phase</h3> 
+{% for entity in offline %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a>
+    </div>
+    <div class="card-body">
+        {{entity.description}}
+    </div>
+</div>
+{% endfor %}
+{% endif %}
 
-    {% if nomination.exists %}
-    NOMINATION
-    {% for entity in nomination %}
-        {{ entity.title }}
-    {% endfor %}
-    {% endif %}
+{% if poll.exists %}
+<br>
+<h3>Poll Phase</h3> 
+{% for entity in poll %}
+<br>
+<div class="card ">
+    <div class="card-header ">
+    {{ entity.title }}  | {% if ec %} <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a> {% else %} <a href="{% url 'election:entity_detail_user' entity.pk %}">  detail </a>  {% endif %}
+    </div>
+    <div class="card-body">
+        <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
 
-    {% if campaign.exists %}
-    CAMPAIGN
-    {% for entity in campaign %}
-        {{ entity.title }}
-    {% endfor %}
-    {% endif %}
 
-    {% if ec %}
-    {% if blank.exists %}
-    BLANK
-    {% for entity in blank %}
-        {{ entity.title }}
-    {% endfor %}
-    {% endif %}
-    {% endif %}
+
+{% if result.exists %}
+<br>
+<h3>Result Phase</h3> 
+{% for entity in result %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | {% if ec %} <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a> {% else %} <a href="{% url 'election:entity_detail_user' entity.pk %}">  detail </a>  {% endif %}
+    </div>
+    <div class="card-body">
+        <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if ec and initial.exists %}
+<br>
+
+<h3>Initial Phase</h3> 
+{% for entity in initial %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a>
+    </div>
+    <div class="card-body">
+        <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if nomination.exists %}
+<br>
+
+<h3>Nomination Phase</h3> 
+
+{% for entity in nomination %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | {% if ec %} <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a> {% else %} <a href="{% url 'election:entity_detail_user' entity.pk %}">  detail </a>  {% endif %}
+    </div>
+    <div class="card-body">
+       <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if campaign.exists %}
+<br>
+
+<h3>Campaign Phase</h3> 
+{% for entity in campaign %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | {% if ec %} <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a> {% else %} <a href="{% url 'election:entity_detail_user' entity.pk %}">  detail </a>  {% endif %}
+    </div>
+    <div class="card-body">
+        <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if ec and mid.exists %}
+<br>
+<h3>Mid Phase</h3> 
+{% for entity in mid %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a>
+    </div>
+    <div class="card-body">
+        <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if ec and end.exists %}
+<br>
+<h3>End Phase</h3> 
+{% for entity in end %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ entity.title }}  | <a href="{% url 'election:entity_detail_ec' entity.pk %}">  detail </a>
+    </div>
+    <div class="card-body">
+        <pre>{{entity.description | urlize }}</pre>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
 
 {% endblock %}
 
