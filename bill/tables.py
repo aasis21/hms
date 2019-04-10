@@ -5,16 +5,19 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 class TransictionFilter1(django_filters.FilterSet):
+    user=django_filters.CharFilter(field_name='user__username',lookup_expr='icontains',label='User')
     class Meta:
         model = Bill
         fields = ['user', 'reason']
 
 class TransictionFilter2(django_filters.FilterSet):
+    biller=django_filters.CharFilter(field_name='biller__user__username',lookup_expr='icontains',label='Biller')
     class Meta:
         model = Bill
         fields = ['biller', 'reason']
 
 class MessFilter(django_filters.FilterSet):
+    user=django_filters.CharFilter(field_name='user__username',lookup_expr='icontains',label='User')
     class Meta:
         model = Messrem
         exclude=['id']

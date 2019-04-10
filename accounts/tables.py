@@ -5,11 +5,12 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 class SearchFilter(django_filters.FilterSet):
-    state=django_filters.CharFilter(field_name='state',lookup_expr='icontains')
-    first_name=django_filters.CharFilter(field_name='first_name',lookup_expr='icontains')
-    last_name=django_filters.CharFilter(field_name='last_name',lookup_expr='icontains')
-    city=django_filters.CharFilter(field_name='city',lookup_expr='icontains')
-    branch=django_filters.CharFilter(field_name='branch',lookup_expr='icontains')
+    address=django_filters.CharFilter(field_name='address',lookup_expr='icontains',label='Address')
+    name=django_filters.CharFilter(field_name='name',lookup_expr='icontains',label='Name')
+    branch=django_filters.CharFilter(field_name='branch',lookup_expr='icontains',label='Branch')
+    room=django_filters.CharFilter(field_name='room',lookup_expr='icontains',label='Room')
+    user=django_filters.CharFilter(field_name='user__username',lookup_expr='icontains',label='User')
+
     class Meta:
         model = Profile
         exclude=['email_confirmed']

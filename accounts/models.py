@@ -8,32 +8,26 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email_confirmed = models.BooleanField(default=False)
-    first_name = models.CharField(max_length=255, default='None')
-    last_name = models.CharField(max_length=255, default='None')
+    name = models.CharField(max_length=255, default='')
     roll_no=models.IntegerField(default=0)
-    branch=models.CharField(max_length=40,default='None')
-    program=models.CharField(max_length=10,default='None')
-    block=models.CharField(max_length=1,default='None')
-    room_no=models.IntegerField(default=0)
-    city = models.CharField(max_length=255, default='None')
-    state = models.CharField(max_length=255, default='None')
+    branch=models.CharField(max_length=40,default='')
+    program=models.CharField(max_length=10,default='')
+    room=models.CharField(max_length=4,default='')
+    address = models.CharField(max_length=255, default='')
 
     def __str__(self):
         return self.user.username
-    @property
-    def name(self):
-        return '{0} {1}'.format(self.first_name, self.last_name)
-    @property
-    def room(self):
-        return '{0} {1}'.format(self.block, self.room_no)
-    @property
-    def address(self):
-        return '{0}, {1}'.format(self.city, self.state)
 
 class Post(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     post_name = models.CharField(max_length=255, default='')
     post_holders = models.ManyToManyField(User, related_name='posts')
+
+class Announcement(models.Model):
+    user = models.ForeignKey(Post, on_delete=models.CASCADE)
+    heading=models.CharField(max_length=200)
+    content=models.TextField()
+    time=models.DateTimeField(auto_now_add=True)
 
 def create_profile(sender, **kwargs):
     if kwargs['created']:
