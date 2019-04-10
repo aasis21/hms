@@ -112,8 +112,10 @@ def sign_out(request):
 def profile(request):
     """Display User Profile"""
     profile = request.user.profile
+    announcements=models.Announcement.objects.all().order_by('-time')
     return render(request, 'accounts/profile.html', {
-        'profile': profile
+        'profile': profile,
+        'announcements': announcements
     })
 
 @login_required
@@ -143,8 +145,24 @@ def create_post(request):
 @login_required
 def search(request):
     """ For Student search"""
-    search=models.Profile.objects.all()
+    search=models.Profile.objects.filter(email_confirmed=True)
     f=SearchFilter(request.GET, queryset=search)
     table=SearchTable(f.qs)
     RequestConfig(request, paginate={"per_page": 25, "page": 1}).configure(table)
     return render(request, 'accounts/search.html', {'table': table,'filter':f})
+
+@login_required
+def add_announcement(request):
+    post= models.Post.objects.filter(user=request.user)
+    if post.exists():
+        post=post.first()
+        if request.method=='POST':
+            form=forms.AnnouncementForm(request.POST)
+            if form.is_valid():
+                models.Announcement.objects.create(user=post,heading=form.cleaned_data['heading'],content=form.cleaned_data['content'])
+            return HttpResponseRedirect(reverse('accounts:profile'))
+        else:
+            form=forms.AnnouncementForm()
+            return render(request, 'accounts/announcement.html', {'form': form})
+    else:
+        return HttpResponseRedirect(reverse('accounts:profile'))

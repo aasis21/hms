@@ -1,0 +1,19 @@
+
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block title %} Add bill {% endblock %}
+
+{% block body %}
+    <h1>Announcement</h1>
+    <div class="grid-80">
+    <form class="user" method="post" action="">
+        {% csrf_token  %}
+        {% bootstrap_form form %}
+        <input class="btn btn-primary btn-user btn-block"type="submit" value="Add" />
+        <hr>
+    </form>
+    </div>
+{% endblock %}
