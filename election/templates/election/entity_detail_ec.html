@@ -13,7 +13,7 @@
             Description
         </div>
         <div class="card-body">
-            <p class="card-text text-left" id="mdrender"><pre>{{  entity.description }}</pre></p>
+            <p class="card-text text-left" id="mdrender"><pre>{{entity.description | urlize }}</pre></p>
             
         </div>
     </div>
@@ -63,7 +63,7 @@
         {{ candidate.user.username }} |  <a href="{% url 'diafo:view_filled_form' candidate.response.pk %}">  See Nomination response </a> | {% if candidate.approval == True %}   <a href="{% url 'election:approval_reject' candidate.pk %}"> reject </a> {% else %}   <a href="{% url 'election:approval_accept' candidate.pk %}"> accept </a> {% endif %} 
         </div>
         <div class="card-body">
-            {{candidate.readme}}    
+            <pre>  {{candidate.readme | urlize}}    </pre>
         </div>
 
     </div>
