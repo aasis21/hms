@@ -1,0 +1,29 @@
+
+{% extends "layout.html" %}
+{% load django_tables2 %}
+{% load static %}
+{% load bootstrap4 %}
+{% block title %} Student Search {% endblock %}
+
+{% block body %}
+<style>
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+
+    }
+    
+    .flex-container > * {
+      margin: 10px;
+    }
+    </style>
+{% if filter %}
+    <form action="" method="get" class="flex-container">
+        {% bootstrap_form filter.form layout='inline' %}
+        <button name="strt" type="submit" class="btn btn-primary">Filter</button>
+    </form>
+{% endif %}
+{% render_table table %}
+{% endblock %}

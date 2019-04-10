@@ -15,3 +15,13 @@ class Bill(models.Model):
     time=models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.user.username+"[ "+self.biller.name+" ] = "+str(self.bill) +"      ( "+str(self.time)+" )"
+
+class Messrem(models.Model):
+    id=models.AutoField(primary_key=True)
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    start=models.DateField()
+    end=models.DateField()
+    status=models.IntegerField(default=0)
+    @property
+    def link(self):
+        return '/bills/rmremb/'+str(self.id)

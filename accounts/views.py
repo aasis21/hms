@@ -13,12 +13,14 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
+from django_tables2 import RequestConfig
 
 from django.views.generic.edit import UpdateView
 
 from . import models
 from . import forms
 from .tokens import account_activation_token
+from .tables import *
 
 def sign_in(request):
     form = AuthenticationForm()
@@ -84,6 +86,7 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.profile.email_confirmed = True
+        user.profile.save()
         user.save()
         login(request, user)
         messages.success(
@@ -137,3 +140,11 @@ def create_post(request):
     else:
         return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
 
+@login_required
+def search(request):
+    """ For Student search"""
+    search=models.Profile.objects.all()
+    f=SearchFilter(request.GET, queryset=search)
+    table=SearchTable(f.qs)
+    RequestConfig(request, paginate={"per_page": 25, "page": 1}).configure(table)
+    return render(request, 'accounts/search.html', {'table': table,'filter':f})
