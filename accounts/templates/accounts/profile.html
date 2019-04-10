@@ -25,7 +25,7 @@
                 {{announcement.heading}}
         </div>
         <div class="card-body">
-            {{announcement.content|urlize}}
+           <pre> {{announcement.content|urlize}}</pre>
         </div>
         <div class='card-footer'>{{ announcement.user.user.username }}  | {{ announcement.time }} </div>
     </div>
