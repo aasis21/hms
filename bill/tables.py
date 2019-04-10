@@ -35,7 +35,7 @@ class TransictionTable(tables.Table):
 
 class MessTable(tables.Table):
     Cancel = tables.TemplateColumn(
-        template_code='''<a href="/bill/rmremb/{{record.id}}">x</a>''',
+        template_code='''<a href="{% url 'bills:rmremb' record.id %}">x</a>''',
     )
     class Meta:
         model = Messrem
