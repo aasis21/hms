@@ -1,0 +1,17 @@
+
+{% extends "layout.html" %}
+{% load django_tables2 %}
+{% load static %}
+{% load bootstrap4 %}
+{% block title %} Reimbursement request {% endblock %}
+
+{% block body %}
+{% if filter %}
+    <form action="" method="get" class="form form-inline">
+        {% bootstrap_form filter.form layout='inline' %}
+        {% bootstrap_button 'filter' %}
+    </form>
+{% endif %}
+{% render_table table %}
+<a href="{% url  'bills:accept' %}" class="btn btn-primary">Accept</a>
+{% endblock %}

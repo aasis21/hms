@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from .tables import *
 from django_tables2 import RequestConfig
 
-from .models import Bill, Billers
-from .forms import BillForm
+from .models import *
+from .forms import *
 # Create your views here.
 @login_required
 def bill(request):
@@ -51,16 +51,59 @@ def addbill(request):
                 user=User.objects.filter(username=form.cleaned_data['user'])
                 if user.exists():
                     Bill.objects.create(user=user.first(),bill=int(form.cleaned_data['bill']), biller=biller, reason=form.cleaned_data['reason'] )
-                return HttpResponseRedirect('/bill/addbill')
+                return HttpResponseRedirect(reverse('bills:addbill'))
         else:
             form = BillForm()
 
         return render(request, 'bill/billform.html', {'form': form})
     else:
-        return HttpResponseRedirect('/bill')
+        return HttpResponseRedirect(reverse('bills:bill'))
         
+@login_required
+def mess_rembursement(request):
+    if Billers.objects.filter(user=request.user).exists():
+        biller=Billers.objects.filter(user=request.user).first()
+        if(request.user.username=='mess'):
+            rem=Messrem.objects.filter(status=0)
+            f=MessFilter(request.GET, queryset=rem)
+            table=MessTable(f.qs)
+            RequestConfig(request, paginate={"per_page": 25, "page": 1}).configure(table)
+            return render(request, 'bill/mess.html', {'table': table,'filter':f})
+        else:
+            return HttpResponseRedirect(reverse('bills:bill'))
+    else:
+        if request.method == 'POST':
+            form = MessForm(request.POST)
+            if form.is_valid():
+                Messrem.objects.create(user=request.user,start=form.cleaned_data['start_data'],end=form.cleaned_data['end_data'])
+                return HttpResponseRedirect(reverse('bills:messrem'))
+        else:
+            form = MessForm()
+            return render(request, 'bill/messremform.html', {'form': form})
 
 
+@login_required
+def rmremb(request,id):
+    if(request.user.username=='mess'):
+        rem=Messrem.objects.filter(id=id)
+        if rem.exists():
+            rem=rem.first()
+            rem.status=-1
+            rem.save()
+    return HttpResponseRedirect(reverse('bills:messrem'))
 
-
-
+@login_required
+def accept(request):
+    if(request.user.username=='mess'):
+        rem=Messrem.objects.filter(status=0)
+        biller=Billers.objects.filter(user=request.user).first()
+        if rem.exists():
+            for x in rem:
+                amount=x.end-x.start
+                amount=amount.days
+                amount=int(amount)*50
+                Bill.objects.create(user=x.user,bill=-amount, biller=biller, reason="Rembursement cleared" )
+                x.status=1
+                x.save()
+                
+    return HttpResponseRedirect(reverse('bills:messrem'))
