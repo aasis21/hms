@@ -1,22 +1,24 @@
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
 
 # Create your views here.
 from . import models
-from diafo.models import Questionnaire
+from diafo.models import Questionnaire, FilledForm
 from . import forms
 
 @login_required
-def create_entit(request):
+def create_form(request):
 #     if request.user.username = "ec":
         
 #     else:
 #         return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
 
-    questionnaire = Questionnaire.objects.create(name="sdghs")
+    questionnaire = Questionnaire.objects.create(name="Hall President Nomination")
     survey = models.Survey.objects.create(title="djhfkjhdj", questionnaire = questionnaire)
     return HttpResponseRedirect(reverse('diafo:admin_view', kwargs={'pk': survey.questionnaire.pk}))
 
@@ -30,13 +32,168 @@ def create_entity(request):
                 entity_title = form.cleaned_data["entity_title"]
                 desc = form.cleaned_data["description"]
                 questionnaire = Questionnaire.objects.create(name= form_title)
-                models.Entity.objects.create(title = form.cleaned_data, description = desc, nomination = questionnaire)
-                return render(request, 'message.html', { 'message' : 'New entity made' , 'code' : '404' })
+                entity = models.Entity.objects.create(title = entity_title, description = desc, nomination = questionnaire)
+                
+                nota = User.objects.get(username='nota')
+                response = questionnaire.add_answer(nota, '')
+                models.EntityCandidate.objects.create(entity = entity, user = nota, readme = "I am NOTA" , response = response)
+
+                return HttpResponseRedirect(reverse('election:entity_detail_ec', kwargs={'pk': entity.pk}))
         
         return render(request, 'election/entity_create.html', {'form': form})
-
     else:
         return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+
+@login_required
+def entity_detail_user(request, pk):
+    try:
+        entity = models.Entity.objects.get(pk=pk)
+    except:
+        return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+    
+    candidates = entity.candidates.filter(approval=True)
+    phase = entity.phase
+    if phase == "BP":
+        return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+
+    phase_dict = {'IP':'Initial Phase', 'NP': 'Nomination Phase','CP' : 'Campaign Phase', 'PP': 'Polling Phase', 'OPP': 'Offline Polling Phase','MP': 'Mid Phase', 'RP': 'Result Phase', 'EP': 'End Phase' }
+    
+    manifesto_form = forms.NomiManifestoForm()
+    
+    cast_form = forms.PollForm(initial={ 'candidates' : models.EntityCandidate.objects.filter(entity = entity, user=request.user).first() })
+    cast_form.fields['candidates'].queryset = models.EntityCandidate.objects.filter(entity = entity)
+
+    return render(request, 'election/entity_detail_user.html',{'entity': entity, 'candidates': candidates, 'phase' : phase_dict[phase], \
+            'manifesto_form' : manifesto_form, 'result' : candidates.order_by('-votes'), 'cast_form' : cast_form })
+
+
+
+@login_required
+def entity_detail_ec(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+
+    try:
+        entity = models.Entity.objects.get(pk=pk)
+    except:
+        return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+    
+    phase = entity.phase
+    candidates = entity.candidates.all()
+    phase_dict = {'IP':'Initial Phase', 'NP': 'Nomination Phase','CP' : 'Campaign Phase', 'PP': 'Polling Phase', 'OPP': 'Offline Polling Phase','MP': 'Mid Phase', 'RP': 'Result Phase', 'EP': 'End Phase' }
+
+    phase_change_form = forms.PhaseChangeForm(initial={'phase': phase})
+    edit_desciption_form = forms.EditDescriptionForm(initial={'description' : entity.description})
+
+
+    return render(request, 'election/entity_detail_ec.html',{'entity': entity, 'candidates': candidates, 'phase' : phase_dict[phase], \
+        'phase_change_form': phase_change_form, 'edit_description_form' : edit_desciption_form })
+
+
+@login_required
+@require_http_methods(["GET"])
+def approval_accept(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+    entity = models.EntityCandidate.objects.get(pk=pk)
+    entity.approval = True
+    entity.phase = entity.entity.phase
+    entity.save()
+    return HttpResponseRedirect(reverse('election:entity_detail_ec', kwargs={'pk': entity.entity.pk}))
+    
+@login_required
+@require_http_methods(["GET"])
+def approval_reject(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+    entity = models.EntityCandidate.objects.get(pk=pk)
+    entity.approval = False
+    entity.phase = entity.entity.phase
+    entity.save()
+    return HttpResponseRedirect(reverse('election:entity_detail_ec', kwargs={'pk': entity.entity.pk}))
+
+@login_required
+@require_http_methods(["POST"])
+def phase_edit(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+    entity = models.Entity.objects.get(pk=pk)
+    phase_change_form = forms.PhaseChangeForm(request.POST)
+    if phase_change_form.is_valid():
+        entity.phase = phase_change_form.cleaned_data['phase']
+        entity.save()
+        return HttpResponseRedirect(reverse('election:entity_detail_ec', kwargs={'pk': pk}))
+    else:
+        return render(request, 'message.html', { 'message' : 'Form input Not valid' , 'code' : '404' })
+
+@login_required
+@require_http_methods(["POST"])
+def description_edit(request, pk):
+    if request.user.username != "ec":
+        return render(request, 'message.html', { 'message' : 'Page Not Found'  , 'code' : '404' })
+    entity = models.Entity.objects.get(pk=pk)
+    edit_desciption_form = forms.EditDescriptionForm(request.POST)
+    if edit_desciption_form.is_valid():
+        entity.description = edit_desciption_form.cleaned_data['description']
+        entity.save()
+        return HttpResponseRedirect(reverse('election:entity_detail_ec', kwargs={'pk': pk}))
+    else:
+        return render(request, 'message.html', { 'message' : 'Form input Not valid' , 'code' : '404' })
+
+@login_required
+@require_http_methods(["POST"])
+def cast_vote(request, pk):
+    entity = models.Entity.objects.get(pk=pk)
+    phase = entity.phase
+    if phase != "PP":
+        return render(request, 'message.html', { 'message' : 'Not in Polling phase' , 'code' : '404' })
+
+    cast_form = forms.PollForm(request.POST)
+    if cast_form.is_valid():
+        vote_candidate =  cast_form.cleaned_data['candidates']
+        check_for_vote = entity.votes.filter(user = request.user)
+        if check_for_vote.exists():
+            return render(request, 'message.html', { 'message' : 'Can not vote Twice' , 'code' : '404' })
+        models.EntityVotecast.objects.create(entity = entity, user = request.user)
+        entity_candidate = entity.candidates.filter(user = vote_candidate).first()
+        entity_candidate.votes = entity_candidate.votes  + 1
+        entity_candidate.save()
+        return render(request, 'message.html', { 'message' : 'Vote Casted Successfully' , 'code' : '200' })
+
+    else:
+        return render(request, 'message.html', { 'message' : 'Form input Not valid' , 'code' : '404' })
+
+    
+@login_required
+@require_http_methods(["POST"])
+def file_nomination(request, pk):
+    try:
+        entity = models.Entity.objects.get(pk=pk)
+        phase = entity.phase
+        if phase != "NP":
+            return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
+
+        manifesto_form = forms.NomiManifestoForm(request.POST)
+        if manifesto_form.is_valid():
+            manifesto =  manifesto_form.cleaned_data['manifesto']
+            check_for_filled = entity.candidates.filter(user = request.user)
+            if check_for_filled.exists():
+                return render(request, 'message.html', { 'message' : 'Can not file Nomination Twice' , 'code' : '404' })
+            
+            nomination_response = entity.nomination.filledform_set.filter(applicant = request.user)
+
+            if not nomination_response.exists():
+                return render(request, 'message.html', { 'message' : 'First fill the Nomination Form' , 'code' : '404' })
+
+            response = nomination_response.last()
+
+            models.EntityCandidate.objects.create(entity = entity, user = request.user,response = response, readme = manifesto)
+            return render(request, 'message.html', { 'message' : 'Nomination Filed Successfully' , 'code' : '200' })
+        else:
+            return render(request, 'message.html', { 'message' : 'Form input Not valid' , 'code' : '404' })
+    except:
+        return render(request, 'message.html', { 'message' : 'Page Not Found s'  , 'code' : '404' })
+
 
 
 @login_required
