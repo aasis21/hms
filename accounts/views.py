@@ -83,7 +83,26 @@ def activate(request, uidb64, token):
     except:
         user = None
 
+    import sqlite3
+    import os.path
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "hms.db")
+    conn = sqlite3.connect(db_path)
     if user is not None and account_activation_token.check_token(user, token):
+        c = conn.cursor()
+
+        for row in c.execute("select * from student_data where user = :who", {"who":user.username}):
+            print(row)
+            user.profile.user_id = row[0]
+            user.profile.roll_no = row[1]
+            user.profile.name = row[2]
+            user.profile.room = row[3]
+            user.profile.program = row[4]
+            user.profile.branch = row[5]
+            user.profile.address = row[6]
+        conn.close()
+
         user.is_active = True
         user.profile.email_confirmed = True
         user.profile.save()
@@ -166,3 +185,5 @@ def add_announcement(request):
             return render(request, 'accounts/announcement.html', {'form': form})
     else:
         return HttpResponseRedirect(reverse('accounts:profile'))
+
+# conn.commit()
