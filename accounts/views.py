@@ -94,8 +94,7 @@ def activate(request, uidb64, token):
 
         for row in c.execute("select * from student_data where user = :who", {"who":user.username}):
             print(row)
-            user.profile.user_id = row[0]
-            user.profile.roll_no = row[1]
+            user.profile.roll_no = int(row[1])
             user.profile.name = row[2]
             user.profile.room = row[3]
             user.profile.program = row[4]
