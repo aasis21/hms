@@ -18,7 +18,7 @@
 
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-  
+
 
 </head>
 
@@ -131,6 +131,25 @@
           </div>
         </div>
       </li>
+
+
+
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseBill"  aria-controls="collapsePages">
+          <i class="far fa-money-bill-alt"></i>
+          <span>Guest Room </span>
+        </a>
+        <div id="collapseBill" class="collapse show" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="/grb">Book</a>
+            {% if request.user == 'halloffice' %}
+              <a class="collapse-item" href="/grb/booking-requests">Booking Requests</a>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+
+
       <!-- Nav Item - Charts -->
       <li class="nav-item">
         <a class="nav-link" href="{% url 'accounts:search' %}">
@@ -144,7 +163,7 @@
             <span> Announcement</span></a>
         </li>
         {% endif %}
-  
+
       <!-- Nav Item - Tables -->
       <li class="nav-item">
         <a class="nav-link" href="tables.html">
@@ -203,7 +222,7 @@
               </div>
             </li>
 
-           
+
             <div class="topbar-divider d-none d-sm-block"></div>
 
             <!-- Nav Item - User Information -->
@@ -214,7 +233,7 @@
                   {% else %}
                       <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
                   {% endif %}
-               
+
                 <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
               </a>
               <!-- Dropdown - User Information -->
@@ -306,7 +325,7 @@
   <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
 
   {% block script %}
-         
+
 
   {% endblock %}
 

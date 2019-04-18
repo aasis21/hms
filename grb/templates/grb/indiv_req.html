@@ -1,0 +1,97 @@
+{% extends "layout.html" %} {% load static %} {% load bootstrap4 %} {% block title %} Booking Requests {% endblock %} {% block body %}
+<h3> Booking Requests  </h3>
+<hr>
+{% for x in messages %}
+<div class="col-xl-12 mb-2">
+    {% if x.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+    <div class="card border-left-error shadow h-100 py-2">
+    {% elif x.level == 25 %}
+    <div class="card border-left-success shadow h-100 py-2">
+    {% endif %}
+		<div class="card-body">
+			<div class="row no-gutters align-items-center">
+				<div class="col mr-2">
+                    {% if x.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class=" font-weight-bold text-error text-uppercase mb-1">Error</div>
+                    {% elif x.level == 25 %}
+                    <div class=" h5 font-weight-bold text-success text-uppercase mb-1">Success</div>
+                    {% endif %}
+					<div class="text-md mb-0 text-gray-800">{{x}}</div>
+				</div>
+				<div class="col-auto">
+					<i class="fas fa-info fa-2x text-gray-300"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+<div class="row">
+	<!-- Earnings (Monthly) Card Example -->
+	<div class="col-lg-12">
+		<div class="card shadow mb-30">
+			<div class="card-header py-3">
+				<h5 class="m-0 font-weight-bold text-primary">{{username}}</h5>
+			</div>
+			<div class="card-body" >
+				<div class="row">
+					{% if not booking_list %}
+					<div class="text-center">
+						<h3> No requests for the user </h3>
+					</div>
+					{% endif %}
+					{% for x in booking_list %}
+					<div class="col-lg-3 col-sm-12">
+
+						<div class="card shadow mb-4">
+							<!-- Card Header - Accordion -->
+							<a href="#collapseid_{{x.pk}}" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+								<h6 class="m-0 font-weight-bold text-primary">{{x.date}}</h6>
+							</a>
+							<div class="collapse show" id="collapseid_{{x.pk}}">
+								<div class="card-body">
+									<ul class="list-group">
+										<li class="list-group-item">Guest Room {{x.room}}</li>
+									</ul>
+								</div>
+								<div class="text-center" style="margin-bottom: 10px;">
+									<a href="/grb/approve-request/{{x.pk}}" class="btn btn-success btn-icon-split" style="opacity:0.9; margin:0 10px;">
+					                    <span class="icon text-white-50">
+					                    	<i class="fas fa-check"></i>
+					                    </span>
+					                    <span class="text">Approve</span>
+					                </a>
+									<a href="/grb/delete-request/{{x.pk}}" class="btn btn-danger btn-icon-split" style="opacity:0.9; margin:0 10px;">
+					                    <span class="icon text-white-50">
+					                    	<i class="fas fa-trash"></i>
+					                    </span>
+					                    <span class="text">Decline</span>
+					                </a>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+				<hr>
+				<div class="text-center" style="margin-bottom: 10px;">
+					<a href="/grb/approve-all/{{username}}" class="btn btn-success btn-icon-split" style="opacity:0.9; margin:0 10px;">
+						<span class="icon text-white-50">
+							<i class="fas fa-check"></i>
+						</span>
+						<span class="text">Approve all</span>
+					</a>
+					<a href="/grb/delete-all/{{username}}" class="btn btn-danger btn-icon-split" style="opacity:0.9; margin:0 10px;">
+						<span class="icon text-white-50">
+							<i class="fas fa-trash"></i>
+						</span>
+						<span class="text">Decline all</span>
+					</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+{% endblock %}
