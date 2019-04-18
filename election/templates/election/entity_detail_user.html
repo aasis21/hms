@@ -18,6 +18,20 @@
     </div>
     </div>
 
+    <div class="card ">
+    <div class="card-header">
+        Batch Criterion
+    </div>
+    <div class="card-body">
+        <p class="card-text text-left" id="mdrender">
+            {% for b in batch %}
+            {{b}} <br>
+            {% endfor %}
+        </p>        
+    </div>
+    </div>
+    
+
     {% if entity.phase == "NP"%}
         <br>
         <div class="card ">
@@ -58,7 +72,7 @@
         <br>
         <div class="card ">
             <div class="card-header">
-            {{ candidate.user.username }}  
+            {{ candidate.user.username }}   | <a href="{% url 'accounts:user_profile' candidate.user.username %}">  candidate profile </a> | 
             </div>
             <div class="card-body">
                 Votes : {{candidate.votes}}
@@ -93,7 +107,7 @@
         <br>
         <div class="card ">
             <div class="card-header">
-            {{ candidate.user.username }}
+            {{ candidate.user.username }}  | <a href="{% url 'accounts:user_profile' candidate.user.username %}">  candidate profile </a> | 
             </div>
             <div class="card-body">
                <pre> {{candidate.readme |  urlize }}   </pre>

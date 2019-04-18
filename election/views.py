@@ -40,8 +40,10 @@ def create_entity(request):
                 form_title = form.cleaned_data["form_title"]
                 entity_title = form.cleaned_data["entity_title"]
                 desc = form.cleaned_data["description"]
+                batch = form.cleaned_data["batch"]
+                batch = ','.join(batch)
                 questionnaire = Questionnaire.objects.create(name= form_title)
-                entity = models.Entity.objects.create(title = entity_title, description = desc, nomination = questionnaire)
+                entity = models.Entity.objects.create(title = entity_title, description = desc, nomination = questionnaire, batch = batch)
                 
                 nota = User.objects.get(username='nota')
                 response = questionnaire.add_answer(nota, '')
@@ -62,6 +64,8 @@ def entity_detail_user(request, pk):
     
     candidates = entity.candidates.filter(approval=True)
     phase = entity.phase
+    batch = entity.batch.split(',')
+    batch = [ "Y_" + x for x in batch]
     if phase == "BP":
         return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
 
@@ -72,9 +76,8 @@ def entity_detail_user(request, pk):
     nota = User.objects.get(username = "nota")
     cast_form = forms.PollForm(initial={ 'candidates' : models.EntityCandidate.objects.filter(entity = entity, user=nota).first() })
     cast_form.fields['candidates'].queryset = models.EntityCandidate.objects.filter(entity = entity, approval = True)
-
     return render(request, 'election/entity_detail_user.html',{'entity': entity, 'candidates': candidates, 'phase' : phase_dict[phase], \
-            'manifesto_form' : manifesto_form, 'result' : candidates.order_by('-votes'), 'cast_form' : cast_form })
+            'manifesto_form' : manifesto_form, 'result' : candidates.order_by('-votes'), 'cast_form' : cast_form, 'batch' : batch })
 
 def entity_offline_poll(request, pk):
     if request.user.username != "ec":
@@ -108,6 +111,8 @@ def entity_detail_ec(request, pk):
         return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
     
     phase = entity.phase
+    batch = entity.batch.split(',')
+    batch = [ "Y_" + x for x in batch]
     candidates = entity.candidates.all()
     phase_dict = {'IP':'Initial Phase', 'NP': 'Nomination Phase','CP' : 'Campaign Phase', 'PP': 'Polling Phase', 'OPP': 'Offline Polling Phase','MP': 'Mid Phase', 'RP': 'Result Phase', 'EP': 'End Phase' }
 
@@ -116,7 +121,7 @@ def entity_detail_ec(request, pk):
 
 
     return render(request, 'election/entity_detail_ec.html',{'entity': entity, 'candidates': candidates, 'phase' : phase_dict[phase], \
-        'phase_change_form': phase_change_form, 'edit_description_form' : edit_desciption_form })
+        'phase_change_form': phase_change_form, 'edit_description_form' : edit_desciption_form , 'result' : candidates.order_by('-votes') , 'batch':batch})
 
 
 @login_required
@@ -223,6 +228,14 @@ def file_nomination(request, pk):
     try:
         entity = models.Entity.objects.get(pk=pk)
         phase = entity.phase
+        batch = entity.batch.split(',')
+        user_batch = request.user.profile.roll_no
+        user_batch = str(user_batch)[:2]
+        if "all" in batch or user_batch in batch:
+            pass
+        else:
+            return render(request, 'message.html', { 'message' : 'Not eleigible to file nomination' , 'code' : '404' })
+
         if phase != "NP":
             return render(request, 'message.html', { 'message' : 'Page Not Found' , 'code' : '404' })
 

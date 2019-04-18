@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block title %} Add Post Holder {% endblock %}
+
+{% block body %}
+    <h1>Add New PostHolder</h1>
+    <div class="grid-80">
+    <form class="user" method="post">
+        {% csrf_token  %}
+        {% bootstrap_form form %}
+        <input class="btn btn-primary btn-user btn-block"type="submit" value="add" />
+        <hr>
+    </form>
+    </div>
+{% endblock %}

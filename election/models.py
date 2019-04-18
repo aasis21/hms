@@ -23,6 +23,10 @@ class Entity(models.Model):
     description = models.TextField(max_length=2000)
     nomination = models.OneToOneField(Questionnaire, null=True, on_delete=models.CASCADE)
     phase = models.CharField(max_length=30, choices=PHASE_CHOICES, default = 'IP')
+    batch = models.CharField(max_length = 100, default = "all")
+
+    def __str__(self):
+        return self.title
 
 class EntityCandidate(models.Model):
     entity = models.ForeignKey(Entity,related_name='candidates', on_delete = models.CASCADE)

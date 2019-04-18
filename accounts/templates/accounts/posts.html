@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block title %} POST {% endblock %}
+
+{% block body %}
+
+<h3>Posts : Hall Administration</h3> 
+{% for post in posts %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ post.post_name }}  | <a href="#">  detail </a>
+    </div>
+    <div class="card-body">
+        {% for user in post.post_holders.all %}
+            {{ user.profile.name }} <br> 
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
