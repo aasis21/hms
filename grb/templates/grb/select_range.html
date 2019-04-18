@@ -1,0 +1,20 @@
+
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block title %} Add bill {% endblock %}
+
+{% block body %}
+    <h1>Guest Room Booking</h1>
+    <div class="grid-80">
+    <form class="user" method="post" action="">
+        {% csrf_token  %}
+        {% bootstrap_form form %}
+
+        <input class="btn btn-primary btn-user btn-block"type="submit" value="Query" />
+    </form>
+
+    </div>
+{% endblock %}

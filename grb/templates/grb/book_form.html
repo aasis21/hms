@@ -1,0 +1,97 @@
+
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block title %} Guest Room Booking {% endblock %}
+
+{% block body %}
+    <h3>Guest Room Booking</h3>
+<hr>
+
+
+{% for x in messages %}
+<div class="col-xl-12 mb-2">
+    {% if x.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+    <div class="card border-left-error shadow h-100 py-2">
+    {% elif x.level == 25 %}
+    <div class="card border-left-success shadow h-100 py-2">
+    {% endif %}
+		<div class="card-body">
+			<div class="row no-gutters align-items-center">
+				<div class="col mr-2">
+                    {% if x.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class=" font-weight-bold text-error text-uppercase mb-1">Error</div>
+                    {% elif x.level == 25 %}
+                    <div class=" h5 font-weight-bold text-success text-uppercase mb-1">Success</div>
+                    {% endif %}
+					<div class="text-md mb-0 text-gray-800">{{x}}</div>
+				</div>
+				<div class="col-auto">
+					<i class="fas fa-info fa-2x text-gray-300"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+    <div class="row">
+    	<!-- Earnings (Monthly) Card Example -->
+        {% for form in formset %}
+    	<div class="col-lg-3">
+    		<div class="card shadow mb-4">
+    			<!-- Card Header - Accordion -->
+    			<a href="#collapseid_{{form.q_date}}" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+    				<h6 class="m-0 font-weight-bold text-primary">{{form.q_date}}</h6>
+    			</a>
+    			<div class="collapse show" id="collapseid_{{form.q_date}}">
+                    <form  method="post" action="" >
+    				<div class="card-body">
+                            {% csrf_token %}
+                        {% for hidden_field in form.hidden_fields %}
+                            {{ hidden_field.errors }}
+                            {{ hidden_field }}
+                          {% endfor %}
+    					<ul class="list-group">
+
+
+                            {% for field in form.visible_fields %}
+    						<li class="list-group-item">
+                                <div class="form-check" style="padding:0px;">
+                                    {{ field }}
+                                    <label class="form-check-label" for="id_room_1">{{ field.label_tag }} </label>
+                                </div>
+                            </li>
+                            {% endfor %}
+
+    					</ul>
+
+
+    				</div>
+    				<div class="text-center" style="margin-bottom: 10px;">
+    					<button type="submit" class="btn btn-info btn-icon-split text-center">
+
+                        <button type="submit" class="btn btn-primary btn-icon-split text-center" style="opacity: 0.9">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                            <span class="text"> Request</span>
+                        </button>
+
+    				</div>
+                </form>
+    			</div>
+    		</div>
+    	</div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+
+
+{% endblock %}
