@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'election',
     'diafo',
+    'grb',
     'bill.apps.BillConfig',
     'bootstrap4',
     'django.contrib.admin',
@@ -138,3 +139,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
  ]
+
+GR_COUNT = 4
