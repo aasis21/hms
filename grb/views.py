@@ -25,6 +25,9 @@ def see_requests(request):
     for x in users_list:
         tmp_unm = User.objects.get(pk = x["user"])
         tmp_bk = Request.objects.filter(booking_status = 'P', user = tmp_unm)
+        if len(tmp_bk) == 0 :
+            continue
+                    
         bookings += [{
             "user" : Profile.objects.get(user = tmp_unm),
             "books" : tmp_bk,
