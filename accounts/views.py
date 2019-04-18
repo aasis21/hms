@@ -134,7 +134,8 @@ def dashboard(request):
     """Display User Profile"""
     announcements=models.Announcement.objects.all().order_by('-time')
     return render(request, 'accounts/announcements.html', {
-        'announcements': announcements
+        'announcements': announcements,
+        'profile' : request.user.profile
     })
 
 @login_required

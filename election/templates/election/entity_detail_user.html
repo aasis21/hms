@@ -18,6 +18,20 @@
     </div>
     </div>
 
+    <div class="card ">
+    <div class="card-header">
+        Batch Criterion
+    </div>
+    <div class="card-body">
+        <p class="card-text text-left" id="mdrender">
+            {% for b in batch %}
+            {{b}} <br>
+            {% endfor %}
+        </p>        
+    </div>
+    </div>
+    
+
     {% if entity.phase == "NP"%}
         <br>
         <div class="card ">
