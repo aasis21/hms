@@ -7,14 +7,33 @@
 {% block title %} Add bill {% endblock %}
 
 {% block body %}
-    <h1>Guest Room Booking</h1>
-    <div class="grid-80">
-    <form class="user" method="post" action="">
-        {% csrf_token  %}
-        {% bootstrap_form form %}
+    <h3>Guest Room Booking</h3>
+    <hr>
 
-        <input class="btn btn-primary btn-user btn-block"type="submit" value="Query" />
-    </form>
+
+
+    <div class="row">
+        <div class="col-lg-3">
+        </div>
+    	<div class="col-lg-6">
+    		<div class="card shadow mb-30">
+
+    			<div class="card-body" >
+    				<hr>
+                    <form class="user" method="post" action="">
+                        {% csrf_token  %}
+                        {% bootstrap_form form %}
+
+                        <input class="btn btn-primary btn-user btn-block"type="submit" value="Query" />
+                    </form>
+
+    			</div>
+    		</div>
+
+    	</div>
+        <div class="col-lg-3">
+        </div>
 
     </div>
+
 {% endblock %}

@@ -131,6 +131,25 @@
           </div>
         </div>
       </li>
+
+
+
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseBill"  aria-controls="collapsePages">
+          <i class="far fa-money-bill-alt"></i>
+          <span>Guest Room </span>
+        </a>
+        <div id="collapseBill" class="collapse show" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="/grb">Book</a>
+            {% if request.user == 'halloffice' %}
+              <a class="collapse-item" href="/grb/booking-requests">Booking Requests</a>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+
+
       <!-- Nav Item - Charts -->
       <li class="nav-item">
         <a class="nav-link" href="{% url 'accounts:search' %}">

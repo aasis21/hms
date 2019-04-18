@@ -18,9 +18,9 @@ def temp(request):
     return render(request, 'grb/book_form.html', {'formset' : req_form })
 
 def see_requests(request):
+    if str(request.user) != 'halloffice':
+        return redirect('/')
     users_list = Request.objects.values('user').distinct()
-    # for x in booking_list:
-    #     print("LL", x)
     bookings = []
     for x in users_list:
         tmp_unm = User.objects.get(pk = x["user"])
@@ -34,11 +34,15 @@ def see_requests(request):
     return render(request, 'grb/see_req.html', {'booking_list' : bookings})
 
 def user_requests(request, username):
+    if str(request.user) != 'halloffice':
+        return redirect('/')
     tmp_unm = User.objects.get(username = username)
     bookings = Request.objects.filter(booking_status = 'P', user = tmp_unm).order_by('-pk')
     return render(request, 'grb/indiv_req.html', {'booking_list' : bookings, "username" : username})
 
 def delete_requests(request, pk):
+    if str(request.user) != 'halloffice':
+        return redirect('/')
     if Request.objects.filter(pk = pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
@@ -51,6 +55,8 @@ def delete_requests(request, pk):
     return redirect('/'.format(username))
 
 def approve_requests(request, pk):
+    if str(request.user) != 'halloffice':
+        return redirect('/')
     if Request.objects.filter(pk = pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
@@ -64,6 +70,8 @@ def approve_requests(request, pk):
     return redirect('/'.format(username))
 
 def approve_all(request, username):
+    if str(request.user) != 'halloffice':
+        return redirect('/')
     if User.objects.filter(username = username) != None:
         tmp_obj = User.objects.get(username = username)
         obj = Request.objects.filter(user = tmp_obj)
@@ -76,6 +84,8 @@ def approve_all(request, username):
     return redirect('/'.format(username))
 
 def delete_all(request, username):
+    if str(request.user) != 'halloffice':
+        return redirect('/')
     if User.objects.filter(username = username) != None:
         tmp_obj = User.objects.get(username = username)
         obj = Request.objects.filter(user = tmp_obj)
