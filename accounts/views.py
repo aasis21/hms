@@ -17,6 +17,9 @@ from django_tables2 import RequestConfig
 
 from django.views.generic.edit import UpdateView
 
+from django.utils import timezone
+
+
 from . import models
 from . import forms
 from .tokens import account_activation_token
@@ -109,12 +112,10 @@ def sign_out(request):
 
 
 @login_required
-def profile(request):
+def dashboard(request):
     """Display User Profile"""
-    profile = request.user.profile
     announcements=models.Announcement.objects.all().order_by('-time')
-    return render(request, 'accounts/profile.html', {
-        'profile': profile,
+    return render(request, 'accounts/announcements.html', {
         'announcements': announcements
     })
 
@@ -166,3 +167,57 @@ def add_announcement(request):
             return render(request, 'accounts/announcement.html', {'form': form})
     else:
         return HttpResponseRedirect(reverse('accounts:profile'))
+
+@login_required
+def add_post_holder(request):
+    if request.user.username not in ["ec", "aasis21", "halloffice", "warden"]:
+        return render(request, 'message.html', {'code': 404})
+
+    ph_form = forms.PostHolderForm()
+    if request.method == "POST":
+        ph_form = forms.PostHolderForm(request.POST)
+        if ph_form.is_valid():
+            post_id = ph_form.cleaned_data["post"]
+            user_id = ph_form.cleaned_data["user"]
+            post_user = User.objects.filter(username = post_id)
+            if not post_user.exists():
+                return render(request, 'message.html', {'code': 404, 'message': 'POST NOT FOUND'})
+
+            post = models.Post.objects.filter(user = post_user.first())
+            user = User.objects.filter(username = user_id)
+            if not post.exists() or not user.exists():
+                return render(request, 'message.html', {'code': 404, 'message': 'POST/USER NOT FOUND'})
+            
+            models.PostHistory.objects.create(post = post.first(), user = user.first())
+            post.first().post_holders.add(user.first())
+            return render(request, 'message.html', {'code' : 200 , 'message': "User added SuccessFully"})
+
+    return render(request, 'accounts/postholder_add.html', {'form':ph_form} )
+
+@login_required
+def posts(request):
+    posts = models.Post.objects.all()
+    return render(request, 'accounts/posts.html', {'posts': posts} )
+
+def post_detail(request, post_id):
+    post_user = User.objects.filter(username = post_id)
+    if not post_user.exists():
+        return render(request, 'message.html', {'code': 404, 'message': 'POST NOT FOUND'})
+
+    post = models.Post.objects.filter(user = post_user.first())
+    if not post.exists() :
+        return render(request, 'message.html', {'code': 404, 'message': 'POST/ NOT FOUND'})
+    
+    post = post.first()
+    post_history = models.PostHistory.objects.filter(post = post).order_by('-start_date')
+    post_holders = post.post_holders.all()
+    return render(request, 'accounts/post_detail.html', {'post': post,'post_holders': post_holders, 'history': post_history } )
+
+
+@login_required   
+def profile(request, user_id):
+    user = User.objects.filter(username = user_id)
+    if not user.exists():
+        return render(request, 'message.html', {'code': 404, 'message': 'USER NOT FOUND'})
+    
+    return render(request, 'accounts/profile.html', {'user': user.first()})

@@ -116,7 +116,7 @@ def entity_detail_ec(request, pk):
 
 
     return render(request, 'election/entity_detail_ec.html',{'entity': entity, 'candidates': candidates, 'phase' : phase_dict[phase], \
-        'phase_change_form': phase_change_form, 'edit_description_form' : edit_desciption_form })
+        'phase_change_form': phase_change_form, 'edit_description_form' : edit_desciption_form , 'result' : candidates.order_by('-votes') })
 
 
 @login_required
