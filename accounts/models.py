@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-
+from diafo.models import Questionnaire
 
 # Create your models here.
 class Profile(models.Model):
@@ -41,6 +41,12 @@ class Announcement(models.Model):
     heading=models.CharField(max_length=200)
     content=models.TextField()
     time=models.DateTimeField(auto_now_add=True)
+
+class Form(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    form = models.OneToOneField(Questionnaire,on_delete=models.CASCADE)
+
+
 
 def create_profile(sender, **kwargs):
     if kwargs['created']:

@@ -19,6 +19,9 @@ from django.views.generic.edit import UpdateView
 
 from django.utils import timezone
 
+from diafo.models import Questionnaire
+
+
 
 from . import models
 from . import forms
@@ -241,4 +244,16 @@ def profile(request, user_id):
         return render(request, 'message.html', {'code': 404, 'message': 'USER NOT FOUND'})
     
     return render(request, 'accounts/profile.html', {'user': user.first()})
+
+@login_required
+def create_form(request):
+    questionnaire = Questionnaire.objects.create(name = "Untitled Name")
+    models.Form.objects.create(user = request.user, form = questionnaire)
+
+    return HttpResponseRedirect(reverse('diafo:admin_view', kwargs={'pk': questionnaire.pk}))
+
+@login_required
+def user_forms(request):
+    forms = models.Form.objects.filter(user = request.user)
+    return render(request, 'accounts/forms.html', {'forms':  forms })
 

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block title %} Forms {% endblock %}
+
+{% block body %}
+
+<h3> Diafo Forms created by You </h3> 
+<a href="{% url 'accounts:create_form' %}" class = "btn btn-primary">  Create New Form </a>
+<br>
+{% for form in forms %}
+<br>
+<div class="card ">
+    <div class="card-header">
+    {{ form.form.name }}  | <a href="{% url 'diafo:admin_view' form.form.pk %}" target="_blank"> detail </a>
+    </div>
+    <div class="card-body">
+       Shareable Link : <a href=" {% url 'diafo:user_view' form.form.view_id %}" target="_blank"> here </a>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
