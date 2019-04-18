@@ -58,7 +58,7 @@
         <br>
         <div class="card ">
             <div class="card-header">
-            {{ candidate.user.username }}  
+            {{ candidate.user.username }}   | <a href="{% url 'accounts:user_profile' candidate.user.username %}">  candidate profile </a> | 
             </div>
             <div class="card-body">
                 Votes : {{candidate.votes}}
@@ -93,7 +93,7 @@
         <br>
         <div class="card ">
             <div class="card-header">
-            {{ candidate.user.username }}
+            {{ candidate.user.username }}  | <a href="{% url 'accounts:user_profile' candidate.user.username %}">  candidate profile </a> | 
             </div>
             <div class="card-body">
                <pre> {{candidate.readme |  urlize }}   </pre>

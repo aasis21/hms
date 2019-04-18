@@ -25,7 +25,7 @@
         <br>
         <div class="card ">
             <div class="card-header">
-            {{ candidate.user.username }}  
+            {{ candidate.user.username }} | <a href="{% url 'accounts:user_profile' candidate.user.username %}">  candidate profile </a> | 
             </div>
             <div class="card-body">
                 Votes : {{candidate.votes}}
@@ -60,7 +60,7 @@
     <br>
     <div class="card ">
         <div class="card-header">
-        {{ candidate.user.username }} |  <a href="{% url 'diafo:view_filled_form' candidate.response.pk %}">  See Nomination response </a> | {% if candidate.approval == True %}   <a href="{% url 'election:approval_reject' candidate.pk %}"> reject </a> {% else %}   <a href="{% url 'election:approval_accept' candidate.pk %}"> accept </a> {% endif %} 
+        {{ candidate.user.username }} | <a href="{% url 'accounts:user_profile' candidate.user.username %}">  candidate profile </a> |  <a href="{% url 'diafo:view_filled_form' candidate.response.pk %}">  See Nomination response </a> | {% if candidate.approval == True %}   <a href="{% url 'election:approval_reject' candidate.pk %}"> reject </a> {% else %}   <a href="{% url 'election:approval_accept' candidate.pk %}"> accept </a> {% endif %} 
         </div>
         <div class="card-body">
             <pre>  {{candidate.readme | urlize}}    </pre>
