@@ -14,7 +14,7 @@ class Profile(models.Model):
     roll_no=models.IntegerField(default=0)
     branch=models.CharField(max_length=40,default='')
     program=models.CharField(max_length=10,default='')
-    room=models.CharField(max_length=4,default='')
+    room=models.CharField(max_length=10,default='')
     address = models.CharField(max_length=255, default='')
 
     def __str__(self):

@@ -263,3 +263,25 @@ def user_forms(request):
     forms = models.Form.objects.filter(user = request.user)
     return render(request, 'accounts/forms.html', {'forms':  forms })
 
+@login_required
+def change_room(request):
+    if request.user.username == "halloffice":
+        form = forms.RoomChangeForm()
+        if request.method == "POST":
+            form = forms.RoomChangeForm(request.POST)
+            if form.is_valid():
+                room = form.cleaned_data["room"]
+                user = form.cleaned_data["user"]
+                user = User.objects.filter(username = user)
+                print(user)
+                if user.exists():
+                    user = user.first()
+                    user.profile.room = room
+                    user.profile.save()
+                    return HttpResponseRedirect(reverse('accounts:change_room'))
+                else:
+                    return render(request, 'message.html', {'code': 404, 'message': 'USER NOT FOUND'})  
+        
+        return render(request, 'accounts/change_room.html', {'form': form })
+    else:
+        return render(request, 'message.html', {'code': 404, 'message': 'PAGE NOT FOUND'})  

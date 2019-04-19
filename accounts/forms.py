@@ -10,3 +10,7 @@ class PostCreateForm(forms.Form):
 class PostHolderForm(forms.Form):
     post = forms.CharField(label = 'Post Username', max_length=200)
     user = forms.CharField(label = 'User Username', max_length = 50)
+
+class RoomChangeForm(forms.Form):
+    user = forms.CharField(label = 'Username', max_length=20)
+    room = forms.CharField(label = 'Room Number', max_length = 10)

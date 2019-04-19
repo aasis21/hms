@@ -22,6 +22,6 @@ urlpatterns = [
     path('user_profile/<str:user_id>', views.user_profile, name='user_profile'),
     path('create_form', views.create_form, name='create_form'),
     path('forms', views.user_forms, name='user_forms'),
-
+    path('change_room', views.change_room, name = 'change_room')
 
 ]
