@@ -37,7 +37,7 @@ def sign_in(request):
                 user = form.user_cache
                 if user.is_active:
                     login(request, user)
-                    return HttpResponseRedirect(reverse('accounts:profile'))
+                    return HttpResponseRedirect(reverse('accounts:dashboard'))
                 else:
                     messages.error(
                         request,
@@ -238,12 +238,18 @@ def post_detail(request, post_id):
 
 
 @login_required   
-def profile(request, user_id):
+def user_profile(request, user_id):
     user = User.objects.filter(username = user_id)
     if not user.exists():
         return render(request, 'message.html', {'code': 404, 'message': 'USER NOT FOUND'})
     
     return render(request, 'accounts/profile.html', {'user': user.first()})
+
+@login_required
+def profile(request):
+    user = request.user
+
+    return HttpResponseRedirect(reverse('accounts:user_profile', kwargs={'user_id': user.username }))
 
 @login_required
 def create_form(request):

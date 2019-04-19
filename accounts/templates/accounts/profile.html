@@ -6,6 +6,75 @@
 
 {% block body %}
     <h2>Profile </h2>
-    <p><span class="underline">Name</span>: {{ profile.name }}</p>
-    <p><span class="underline">Email</span>: {{ profile.email }}</p>
+
+    <br>
+    <div class="card ">
+        <div class="card-header">
+        Name
+        </div>
+        <div class="card-body">
+            {{ user.profile.name }}
+        </div>
+    </div>
+
+    <br>
+    <div class="card ">
+        <div class="card-header">
+        Email
+        </div>
+        <div class="card-body">
+            {{ user.username }}@iitk.ac.in
+        </div>
+    </div>
+
+    <br>
+    <div class="card ">
+        <div class="card-header">
+        Roll No
+        </div>
+        <div class="card-body">
+            {{ user.profile.roll_no }}
+        </div>
+    </div>
+
+    <br>
+    <div class="card ">
+        <div class="card-header">
+        Branch 
+        </div>
+        <div class="card-body">
+            {{ user.profile.branch }}
+        </div>
+    </div>
+
+    <br>
+    <div class="card ">
+        <div class="card-header">
+        Program
+        </div>
+        <div class="card-body">
+            {{ user.profile.program }}
+        </div>
+    </div>
+
+     <br>
+    <div class="card ">
+        <div class="card-header">
+        Room
+        </div>
+        <div class="card-body">
+            {{ user.profile.room }}
+        </div>
+    </div>
+
+     <br>
+    <div class="card ">
+        <div class="card-header">
+        Address
+        </div>
+        <div class="card-body">
+            {{ user.profile.address }}
+        </div>
+    </div>
+
 {% endblock %}

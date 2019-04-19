@@ -43,7 +43,7 @@
 
       <!-- Nav Item - Dashboard -->
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'accounts:profile' %}">
+        <a class="nav-link" href="{% url 'accounts:dashboard' %}">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span></a>
       </li>
@@ -56,7 +56,7 @@
         Interface
       </div>
 
-      <!-- Nav Item - Pages Collapse Menu -->
+      {% comment %} <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-fw fa-cog"></i>
@@ -69,8 +69,8 @@
             <a class="collapse-item" href="cards.html">Cards</a>
           </div>
         </div>
-      </li>
-
+      </li> {% endcomment %}
+{% comment %} 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
@@ -86,15 +86,15 @@
             <a class="collapse-item" href="utilities-other.html">Other</a>
           </div>
         </div>
-      </li>
+      </li> {% endcomment %}
 
-      <!-- Divider -->
+      {% comment %} <!-- Divider -->
       <hr class="sidebar-divider">
 
       <!-- Heading -->
       <div class="sidebar-heading">
         Addons
-      </div>
+      </div> {% endcomment %}
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
@@ -106,9 +106,9 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Login Screens:</h6>
             <a class="collapse-item" href="{% url 'accounts:sign_out' %}">Logout</a>
-            <div class="collapse-divider"></div>
+            {% comment %} <div class="collapse-divider"></div>
             <h6 class="collapse-header">Other Pages:</h6>
-            <a class="collapse-item" href="{% url 'accounts:sign_out' %}">Settings</a>
+            <a class="collapse-item" href="{% url 'accounts:sign_out' %}">Settings</a> {% endcomment %}
           </div>
         </div>
       </li>
@@ -135,14 +135,14 @@
 
 
       <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseBill"  aria-controls="collapsePages">
+        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseg"  aria-controls="collapsePages">
           <i class="far fa-money-bill-alt"></i>
           <span>Guest Room </span>
         </a>
-        <div id="collapseBill" class="collapse show" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseg" class="collapse show" aria-labelledby="headingPages" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="/grb">Book</a>
-            {% if request.user == 'halloffice' %}
+            {% if request.user.username == 'halloffice' %}
               <a class="collapse-item" href="/grb/booking-requests">Booking Requests</a>
             {% endif %}
           </div>
@@ -165,11 +165,11 @@
         {% endif %}
 
       <!-- Nav Item - Tables -->
-      <li class="nav-item">
+      {% comment %} <li class="nav-item">
         <a class="nav-link" href="tables.html">
           <i class="fas fa-fw fa-table"></i>
           <span>Tables</span></a>
-      </li>
+      </li> {% endcomment %}
         <!-- Nav Item - Tables -->
       <li class="nav-item">
         <a class="nav-link" href="{% url 'election:index' %}">
@@ -180,6 +180,12 @@
         <a class="nav-link" href="{% url 'accounts:user_forms' %}">
           <i class="fas fa-fw fa-chart-bar"></i>
           <span>Forms</span></a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:posts' %}">
+          <i class="fas fa-fw fa-chart-bar"></i>
+          <span>Posts</span></a>
       </li>
 
       <!-- Divider -->
@@ -238,16 +244,13 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="{% url 'accounts:profile' %}">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   Profile
                 </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Settings
-                </a>
+
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="{% url 'accounts:sign_out' %}" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
                 </a>

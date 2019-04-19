@@ -17,7 +17,7 @@
 <br>
 <div class="card ">
     <div class="card-header">
-    {{ holder.username }} 
+    {{ holder.username }}  | <a href="{% url 'accounts:user_profile' holder.username %}">  profile </a> 
     </div>
     <div class="card-body">
       {{ holder.profile.name  }}  
@@ -36,10 +36,10 @@
 <br>
 <div class="card ">
     <div class="card-header">
-    {{ history.user.username }}
+    {{ history.user.username }} <a href="{% url 'accounts:user_profile' history.user.username %}">  profile </a> 
     </div>
     <div class="card-body">
-        {{ history.start_date }} |  {{ history.end_date }}
+       Start Date:  {{ history.start_date }} |  End Date: {{ history.end_date }}
     </div>
 
 </div>
@@ -47,19 +47,5 @@
 
 {% endif %}
 
-
-{% for post in posts %}
-<br>
-<div class="card ">
-    <div class="card-header">
-    {{ post.post_name }}  | <a href="#">  detail </a>
-    </div>
-    <div class="card-body">
-        {% for user in post.post_holders.all %}
-            {{ user.profile.name }} <br> 
-        {% endfor %}
-    </div>
-</div>
-{% endfor %}
 
 {% endblock %}

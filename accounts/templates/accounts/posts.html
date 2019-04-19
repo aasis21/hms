@@ -11,11 +11,11 @@
 <br>
 <div class="card ">
     <div class="card-header">
-    {{ post.post_name }}  | <a href="#">  detail </a>
+    {{ post.post_name }}  | <a href="{% url 'accounts:post_detail' post.user.username %}">  detail </a>
     </div>
     <div class="card-body">
         {% for user in post.post_holders.all %}
-            {{ user.profile.name }} <br> 
+            {{ user.profile.name }}| <a href="{% url 'accounts:user_profile' user.username %}">  profile </a>  <br> 
         {% endfor %}
     </div>
 </div>
