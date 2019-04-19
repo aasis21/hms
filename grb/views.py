@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+
 from .models import *
 from .forms import *
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,6 +11,7 @@ from hms.settings import GR_COUNT
 from django.contrib import messages
 from django.db.models import Count
 from accounts.models import Profile
+from bill.models import *
 def temp(request):
     if request.method == 'POST':
         req_form = RequestForm(request.POST)
@@ -63,8 +66,13 @@ def approve_requests(request, pk):
     if Request.objects.filter(pk = pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
+        biller=Billers.objects.filter(user=request.user).first()
+        Bill.objects.create(user=username,bill=250, biller=biller, reason="Guest room accepted 1 room")
         obj.booking_status = 'B'
         obj.save()
+        subject = 'Hall office Approved your guest room booking request for '+ str(obj.date)
+        message =   render_to_string('grb/accept1.html', {'user':username,'date': str(obj.date), 'status':'accepted'})
+        username.email_user(subject, message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
@@ -77,8 +85,14 @@ def approve_all(request, username):
         return redirect('/')
     if User.objects.filter(username = username) != None:
         tmp_obj = User.objects.get(username = username)
-        obj = Request.objects.filter(user = tmp_obj)
+        obj = Request.objects.filter(user = tmp_obj,booking_status='P')
+        cnt=obj.count()
+        biller=Billers.objects.filter(user=request.user).first()
+        Bill.objects.create(user=tmp_obj,bill=(int(cnt))*250, biller=biller, reason="Guest room accepted")
         obj.update(booking_status = 'B')
+        subject = 'Hall office Approved all your pending guest room booking request '
+        message =  'Hall office Approved all your pending guest room booking request '
+        username.email_user(subject, message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
@@ -93,6 +107,9 @@ def delete_all(request, username):
         tmp_obj = User.objects.get(username = username)
         obj = Request.objects.filter(user = tmp_obj)
         obj.delete()
+        subject = 'Hall office Declined your guest room booking request for'+ str(obj.date)
+        message = render_to_string('grb/accept1.html', {'user':username,'date': str(obj.date), 'status':'declined'})
+        username.email_user(subject, message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
