@@ -53,6 +53,9 @@ def delete_requests(request, pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
         obj.delete()
+        subject = 'Hall office Declined your guest room booking request for '+ str(obj.date)
+        message =   render_to_string('grb/accept1.html', {'user':username,'date': str(obj.date), 'status':'declined'})
+        username.email_user(subject, message)
         messages.success(request, "Deleted Successfully")
         print("Deleted Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
@@ -67,7 +70,7 @@ def approve_requests(request, pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
         biller=Billers.objects.filter(user=request.user).first()
-        Bill.objects.create(user=username,bill=250, biller=biller, reason="Guest room accepted 1 room")
+        Bill.objects.create(user=username,bill=250, biller=biller, reason="1 guest room accepted")
         obj.booking_status = 'B'
         obj.save()
         subject = 'Hall office Approved your guest room booking request for '+ str(obj.date)
@@ -87,11 +90,12 @@ def approve_all(request, username):
         tmp_obj = User.objects.get(username = username)
         obj = Request.objects.filter(user = tmp_obj,booking_status='P')
         cnt=obj.count()
+        username = User
         biller=Billers.objects.filter(user=request.user).first()
-        Bill.objects.create(user=tmp_obj,bill=(int(cnt))*250, biller=biller, reason="Guest room accepted")
+        Bill.objects.create(user=tmp_obj,bill=(int(cnt))*250, biller=biller, reason=str(cnt) + " guest rooms accepted")
         obj.update(booking_status = 'B')
-        subject = 'Hall office Approved all your pending guest room booking request '
-        message =  'Hall office Approved all your pending guest room booking request '
+        subject = 'Hall office Approved all your guest room booking request'
+        message =   render_to_string('grb/accept_all.html', {'user':username, 'status':'accepted'})
         username.email_user(subject, message)
         messages.success(request, " Successfull")
         print(" Successfully")
@@ -107,9 +111,10 @@ def delete_all(request, username):
         tmp_obj = User.objects.get(username = username)
         obj = Request.objects.filter(user = tmp_obj)
         obj.delete()
-        subject = 'Hall office Declined your guest room booking request for'+ str(obj.date)
-        message = render_to_string('grb/accept1.html', {'user':username,'date': str(obj.date), 'status':'declined'})
-        username.email_user(subject, message)
+        username = User
+        subject = 'Hall office Declined all your guest room booking requests'
+        message =   render_to_string('grb/accept_all.html', {'user':username, 'status':'declined'})
+        username.email_user(subject=subject, message=message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
