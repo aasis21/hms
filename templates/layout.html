@@ -31,7 +31,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'accounts:profile' %}">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'accounts:dashboard' %}">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
@@ -161,8 +161,16 @@
           <a class="nav-link" href="{% url 'accounts:announcement' %}">
             <i class="fas fa-fw fa-bullhorn"></i>
             <span> Announcement</span></a>
-        </li>
-        {% endif %}
+      </li>
+      {% endif %}
+
+       {% if profile.user.username == "halloffice" %}
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:change_room' %}">
+            <i class="fas fa-fw fa-bullhorn"></i>
+            <span> Change Room </span></a>
+      </li>
+      {% endif %}
 
       <!-- Nav Item - Tables -->
       {% comment %} <li class="nav-item">
