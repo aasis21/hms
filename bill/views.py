@@ -14,7 +14,7 @@ from .forms import *
 def bill(request):
     if Billers.objects.filter(user=request.user).exists():
         biller=Billers.objects.filter(user=request.user).first()
-        x=Bill.objects.filter(biller=biller).values(name=F('user__username')).annotate(total_bill=Sum('bill'))
+        x=Bill.objects.filter(biller=biller).values(name=F('user__username')).annotate(total_bill=-1*Sum('bill'))
         table=BillTable(x)
         RequestConfig(request).configure(table)
         return render(request, 'bill/bill.html', {'table': table})
@@ -30,7 +30,7 @@ def transiction(request):
         biller=Billers.objects.filter(user=request.user).first()
         transictions=Bill.objects.filter(biller=biller)
         f=TransictionFilter1(request.GET, queryset=transictions)
-        table=TransictionTable(f.qs)
+        table=TransictionTable1(f.qs)
         RequestConfig(request, paginate={"per_page": 25, "page": 1}).configure(table)
         return render(request, 'bill/bill.html', {'table': table,'filter':f})
     else:

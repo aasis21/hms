@@ -47,6 +47,7 @@ class RequestForm(forms.Form):
 
                 elif get_roomstat(q_date , x, q_request) == "V":
                     self.fields['room_' + str(x)].label = "Room {0} (available)".format(x)
+                self.fields['room_' + str(x)].bg = "red"
 
 class GRRangeForm(forms.Form):
     start_date = forms.DateField(widget = forms.SelectDateWidget(),required=True)

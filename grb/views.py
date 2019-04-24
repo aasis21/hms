@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+
 from .models import *
 from .forms import *
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,6 +11,7 @@ from hms.settings import GR_COUNT
 from django.contrib import messages
 from django.db.models import Count
 from accounts.models import Profile
+from bill.models import *
 def temp(request):
     if request.method == 'POST':
         req_form = RequestForm(request.POST)
@@ -50,6 +53,9 @@ def delete_requests(request, pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
         obj.delete()
+        subject = 'Hall office Declined your guest room booking request for '+ str(obj.date)
+        message =   render_to_string('grb/accept1.html', {'user':username,'date': str(obj.date), 'status':'declined'})
+        username.email_user(subject, message)
         messages.success(request, "Deleted Successfully")
         print("Deleted Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
@@ -63,8 +69,13 @@ def approve_requests(request, pk):
     if Request.objects.filter(pk = pk):
         obj = Request.objects.get(pk = pk)
         username = obj.user
+        biller=Billers.objects.filter(user=request.user).first()
+        Bill.objects.create(user=username,bill=250, biller=biller, reason="1 guest room accepted")
         obj.booking_status = 'B'
         obj.save()
+        subject = 'Hall office Approved your guest room booking request for '+ str(obj.date)
+        message =   render_to_string('grb/accept1.html', {'user':username,'date': str(obj.date), 'status':'accepted'})
+        username.email_user(subject, message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
@@ -77,8 +88,15 @@ def approve_all(request, username):
         return redirect('/')
     if User.objects.filter(username = username) != None:
         tmp_obj = User.objects.get(username = username)
-        obj = Request.objects.filter(user = tmp_obj)
+        obj = Request.objects.filter(user = tmp_obj,booking_status='P')
+        cnt=obj.count()
+        username = User
+        biller=Billers.objects.filter(user=request.user).first()
+        Bill.objects.create(user=tmp_obj,bill=(int(cnt))*250, biller=biller, reason=str(cnt) + " guest rooms accepted")
         obj.update(booking_status = 'B')
+        subject = 'Hall office Approved all your guest room booking request'
+        message =   render_to_string('grb/accept_all.html', {'user':username, 'status':'accepted'})
+        username.email_user(subject, message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))
@@ -93,6 +111,10 @@ def delete_all(request, username):
         tmp_obj = User.objects.get(username = username)
         obj = Request.objects.filter(user = tmp_obj)
         obj.delete()
+        username = User
+        subject = 'Hall office Declined all your guest room booking requests'
+        message =   render_to_string('grb/accept_all.html', {'user':username, 'status':'declined'})
+        username.email_user(subject=subject, message=message)
         messages.success(request, " Successfull")
         print(" Successfully")
         return redirect('/grb/individual-requests/{0}'.format(username))

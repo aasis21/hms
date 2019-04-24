@@ -31,6 +31,14 @@ class BillTable(tables.Table):
 class TransictionTable(tables.Table):
     class Meta:
         model = Bill
+        fields=['user','bill','biller','reason','time']
+        template_name = 'django_tables2/bootstrap.html'
+
+class TransictionTable1(tables.Table):
+    nbill = tables.Column(verbose_name= 'Bill' )
+    class Meta:
+        model = Bill
+        fields=['user','nbill','biller','reason','time']
         template_name = 'django_tables2/bootstrap.html'
 
 class MessTable(tables.Table):

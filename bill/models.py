@@ -13,6 +13,9 @@ class Bill(models.Model):
     biller=models.ForeignKey(Billers, on_delete=models.CASCADE)
     reason=models.CharField(max_length=150)
     time=models.DateTimeField(auto_now_add=True)
+    @property
+    def nbill(self):
+        return -1*self.bill
     def __str__(self):
         return self.user.username+"[ "+self.biller.name+" ] = "+str(self.bill) +"      ( "+str(self.time)+" )"
 
